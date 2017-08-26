@@ -1,0 +1,14 @@
+step 1 : 创建network
+docker network cretae redis_network
+
+step 2 : 创建master
+docker run --network=redis_network --name redis-master -v master_data:/data -d redis redis-server --appendonly yes
+
+step 3 : 创建slaves
+docker run --network=redis_network --name redis-slave1 -v slave1_data:/data -d redis redis-server --appendonly yes --slaveof redis-master 6379
+docker run --network=redis_network --name redis-slave2 -v slave2_data:/data -d redis redis-server --appendonly yes --slaveof redis-master 6379
+
+
+step4 : 创建测试容器
+docker run --network=redis_network --name redis-cli -i -t redis /bin/bash
+在容器中可以通过redis-cli连接主从服务器：redis-cli -h redis-master
